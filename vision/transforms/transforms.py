@@ -2,6 +2,7 @@
 
 
 import types
+import random as py_random
 
 import cv2
 import numpy as np
@@ -275,7 +276,7 @@ class RandomSampleCrop(object):
         height, width, _ = image.shape
         while True:
             # randomly choose a mode
-            mode = random.choice(self.sample_options)
+            mode = py_random.choice(self.sample_options)
             if mode is None:
                 return image, boxes, labels
 
@@ -380,7 +381,7 @@ class RandomSampleCrop_v2(object):
         height, width, _ = image.shape
         while True:
             # randomly choose a mode
-            mode = random.choice(self.sample_options)
+            mode = py_random.choice(self.sample_options)
             if mode is None:
                 return image, boxes, labels
 

@@ -257,26 +257,28 @@ if __name__ == '__main__':
 
     base_net_lr = args.base_net_lr if args.base_net_lr is not None else args.lr
     extra_layers_lr = args.extra_layers_lr if args.extra_layers_lr is not None else args.lr
+    # Get the actual model (unwrap DataParallel if needed)
+    model_for_freeze = net.module if isinstance(net, nn.DataParallel) else net
     if args.freeze_base_net:
         logging.info("Freeze base net.")
-        freeze_net_layers(net.base_net)
-        params = itertools.chain(net.source_layer_add_ons.parameters(), net.extras.parameters(),
-                                 net.regression_headers.parameters(), net.classification_headers.parameters())
+        freeze_net_layers(model_for_freeze.base_net)
+        params = itertools.chain(model_for_freeze.source_layer_add_ons.parameters(), model_for_freeze.extras.parameters(),
+                                 model_for_freeze.regression_headers.parameters(), model_for_freeze.classification_headers.parameters())
         params = [
             {'params': itertools.chain(
-                net.source_layer_add_ons.parameters(),
-                net.extras.parameters()
+                model_for_freeze.source_layer_add_ons.parameters(),
+                model_for_freeze.extras.parameters()
             ), 'lr': extra_layers_lr},
             {'params': itertools.chain(
-                net.regression_headers.parameters(),
-                net.classification_headers.parameters()
+                model_for_freeze.regression_headers.parameters(),
+                model_for_freeze.classification_headers.parameters()
             )}
         ]
     elif args.freeze_net:
-        freeze_net_layers(net.base_net)
-        freeze_net_layers(net.source_layer_add_ons)
-        freeze_net_layers(net.extras)
-        params = itertools.chain(net.regression_headers.parameters(), net.classification_headers.parameters())
+        freeze_net_layers(model_for_freeze.base_net)
+        freeze_net_layers(model_for_freeze.source_layer_add_ons)
+        freeze_net_layers(model_for_freeze.extras)
+        params = itertools.chain(model_for_freeze.regression_headers.parameters(), model_for_freeze.classification_headers.parameters())
         logging.info("Freeze all the layers except prediction heads.")
     else:
         if cuda_index_list:
@@ -305,15 +307,17 @@ if __name__ == '__main__':
             ]
 
     timer.start("Load Model")
+    # Get the actual model (unwrap DataParallel if needed)
+    model = net.module if isinstance(net, nn.DataParallel) else net
     if args.resume:
         logging.info(f"Resume from the model {args.resume}")
-        net.load(args.resume)
+        model.load(args.resume)
     elif args.base_net:
         logging.info(f"Init from base net {args.base_net}")
-        net.init_from_base_net(args.base_net)
+        model.init_from_base_net(args.base_net)
     elif args.pretrained_ssd:
         logging.info(f"Init from pretrained ssd {args.pretrained_ssd}")
-        net.init_from_pretrained_ssd(args.pretrained_ssd)
+        model.init_from_pretrained_ssd(args.pretrained_ssd)
     logging.info(f'Took {timer.end("Load Model"):.2f} seconds to load the model.')
 
     net.to(DEVICE)

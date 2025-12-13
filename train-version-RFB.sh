@@ -5,10 +5,12 @@ log="$log_dir/log"
 mkdir -p "$log_dir"
 
 python3 -u train.py \
+  --pretrained_ssd \
+  ./models/pretrained/version-RFB-320.pth \
   --datasets \
-  ./data/wider_face_add_lm_10_10 \
+  ./data/voc_formatted_dataset_filtered \
   --validation_dataset \
-  ./data/wider_face_add_lm_10_10 \
+  ./data/voc_formatted_dataset_filtered \
   --net \
   RFB \
   --num_epochs \
@@ -16,7 +18,7 @@ python3 -u train.py \
   --milestones \
   "95,150" \
   --lr \
-  1e-2 \
+  1e-3 \
   --batch_size \
   24 \
   --input_size \
@@ -24,7 +26,7 @@ python3 -u train.py \
   --checkpoint_folder \
   ${model_root_path} \
   --num_workers \
-  0 \
+  4 \
   --log_dir \
   ${log_dir} \
   --cuda_index \
