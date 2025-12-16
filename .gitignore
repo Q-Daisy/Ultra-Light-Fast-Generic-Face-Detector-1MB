@@ -16,3 +16,4 @@ data/voc_formatted_dataset_filtered
 data/age3_voc
 train-version-RFB.sh
 train-version-slim.sh
+useless
