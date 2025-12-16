@@ -8,9 +8,9 @@ python3 -u train.py \
   --pretrained_ssd \
   ./models/pretrained/version-RFB-320.pth \
   --datasets \
-  ./data/voc_formatted_dataset_filtered \
+  ./data/age3_voc \
   --validation_dataset \
-  ./data/voc_formatted_dataset_filtered \
+  ./data/age3_voc \
   --net \
   RFB \
   --num_epochs \
@@ -32,3 +32,6 @@ python3 -u train.py \
   --cuda_index \
   0 \
   2>&1 | tee "$log"
+
+
+python3 -u train.py --pretrained_ssd ./models/pretrained/version-RFB-320.pth --datasets ./data/age3_voc --validation_dataset ./data/age3_voc --net RFB --num_epochs 200 --milestones "95,150" --lr 1e-3 --batch_size 24 --input_size 320 --num_workers 16 --cuda_index 0 

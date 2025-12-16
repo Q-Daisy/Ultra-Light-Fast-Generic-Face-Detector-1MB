@@ -110,6 +110,14 @@ def assign_priors(gt_boxes, gt_labels, corner_form_priors,
         boxes (num_priors, 4): real values for priors.
         labels (num_priros): labels for priors.
     """
+    # 处理空 boxes 的情况：如果没有 ground truth boxes，所有 priors 都标记为背景
+    if len(gt_boxes) == 0:
+        num_priors = corner_form_priors.size(0)
+        # 返回零 boxes 和全零 labels（背景）
+        boxes = torch.zeros((num_priors, 4), dtype=gt_boxes.dtype, device=gt_boxes.device)
+        labels = torch.zeros(num_priors, dtype=gt_labels.dtype, device=gt_labels.device)
+        return boxes, labels
+    
     # size: num_priors x num_targets
     ious = iou_of(gt_boxes.unsqueeze(0), corner_form_priors.unsqueeze(1))
     # size: num_priors

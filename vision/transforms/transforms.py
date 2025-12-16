@@ -116,6 +116,12 @@ class imgprocess(object):
 class ToAbsoluteCoords(object):
     def __call__(self, image, boxes=None, labels=None):
         height, width, channels = image.shape
+        # 处理空 boxes 的情况：如果 boxes 为空或不是 2D 数组，直接返回
+        if boxes is None or len(boxes) == 0:
+            return image, boxes, labels
+        # 确保 boxes 是 2D 数组
+        if len(boxes.shape) == 1:
+            boxes = boxes.reshape(-1, 4)
         boxes[:, 0] *= width
         boxes[:, 2] *= width
         boxes[:, 1] *= height
@@ -127,6 +133,12 @@ class ToAbsoluteCoords(object):
 class ToPercentCoords(object):
     def __call__(self, image, boxes=None, labels=None):
         height, width, channels = image.shape
+        # 处理空 boxes 的情况：如果 boxes 为空或不是 2D 数组，直接返回
+        if boxes is None or len(boxes) == 0:
+            return image, boxes, labels
+        # 确保 boxes 是 2D 数组
+        if len(boxes.shape) == 1:
+            boxes = boxes.reshape(-1, 4)
         boxes[:, 0] /= width
         boxes[:, 2] /= width
         boxes[:, 1] /= height

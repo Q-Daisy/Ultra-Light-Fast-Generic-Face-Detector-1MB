@@ -1,2 +1,6 @@
 BACKGROUND
-face
+baby
+child
+middleage
+old
+youngage

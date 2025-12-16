@@ -56,6 +56,9 @@ class VOCDataset:
         if not self.keep_difficult:
             boxes = boxes[is_difficult == 0]
             labels = labels[is_difficult == 0]
+            # 确保过滤后 boxes 仍然是 2D 数组
+            if len(boxes.shape) == 1:
+                boxes = boxes.reshape(0, 4)
         image = self._read_image(image_id)
         if self.transform:
             image, boxes, labels = self.transform(image, boxes, labels)
@@ -108,7 +111,17 @@ class VOCDataset:
                 is_difficult_str = object.find('difficult').text
                 is_difficult.append(int(is_difficult_str) if is_difficult_str else 0)
 
-        return (np.array(boxes, dtype=np.float32),
+        # 确保 boxes 始终是 2D 数组，即使为空也要保持 (0, 4) 的形状
+        if len(boxes) == 0:
+            # 如果 boxes 是空列表，直接创建 shape 为 (0, 4) 的 2D 数组
+            boxes_array = np.zeros((0, 4), dtype=np.float32)
+        else:
+            boxes_array = np.array(boxes, dtype=np.float32)
+            # 确保是 2D 数组（正常情况下应该是，但为了安全起见检查一下）
+            if len(boxes_array.shape) == 1:
+                boxes_array = boxes_array.reshape(-1, 4)
+
+        return (boxes_array,
                 np.array(labels, dtype=np.int64),
                 np.array(is_difficult, dtype=np.uint8))
 
