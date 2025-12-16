@@ -1,0 +1,2 @@
+# cd Ultra-Light-Fast-Generic-Face-Detector-1MB
+python run.py --net_type=RFB --input_size=320 --model_path=./checkpoints/RFB-AGE3.pth --label_path ./checkpoints/age-labels.txt --threshold=0.6 --candidate_size 1000
