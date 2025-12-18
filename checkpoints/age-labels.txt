@@ -1,6 +1,3 @@
 BACKGROUND
-baby
-child
-middleage
 old
-youngage
+young
